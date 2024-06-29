@@ -10,17 +10,40 @@ import java.util.Iterator;
 public class DailyAdviceServer {
     ArrayList<PrintWriter> clientOutputStreams;
 
+    Maze maze;
+
     public class ClientHandler implements Runnable {
         BufferedReader reader;
         Socket sock;
 
-        public ClientHandler(Socket clientSocket)
+        int [] position = new int[2];
+        Maze maze;
+
+        char token;
+
+        public ClientHandler(Socket clientSocket, Maze maze)
         {
             try
             {
                 sock = clientSocket;
                 InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
                 reader = new BufferedReader(isReader);
+                this.maze = maze;
+                // initialize the row and column position for this client
+                if(clientOutputStreams.size() == 1)
+                {
+                    // give first player to connect the position of the turtle
+                    this.position[0] = 0;
+                    this.position[1] = 2;
+                    this.token = '^';
+                }
+                else
+                {
+                    // give second player to connect the position of the hare
+                    this.position[0] = 4;
+                    this.position[1] = 2;
+                    this.token = '*';
+                }
             }
             catch (Exception ex)
             {
@@ -33,7 +56,29 @@ public class DailyAdviceServer {
             String message;
             try {
                 while ((message = reader.readLine()) != null) {
-                    tellEveryone(message);
+                    if(message.equals("n"))
+                    {
+                        maze.moveUp(position, token);
+                    }
+                    else if(message.equals("d"))
+                    {
+                        maze.moveDown(position, token);
+                    }
+                    else if(message.equals("w"))
+                    {
+                        maze.moveLeft(position, token);
+                    }
+                    else if(message.equals("e"))
+                    {
+                        maze.moveRight(position, token);
+                    }
+                    else
+                    {
+                        // TODO: see if it is possible to get the write reference from the List using sock.getOutputStream()
+                        PrintWriter writer = new PrintWriter(sock.getOutputStream());
+                        writer.println("Invalid command");
+                    }
+                    tellEveryone(maze.show());
                 }
             }
             catch (Exception ex)
@@ -68,6 +113,10 @@ public class DailyAdviceServer {
 
     private void go() {
         clientOutputStreams = new ArrayList<>();
+
+        // Instantiate a single shared Maze object in the server class.
+        // This instance will be accessed and modified by all client threads.
+        maze = new Maze();
         try {
             ServerSocket serverSocket = new ServerSocket(5000);
 
@@ -80,7 +129,7 @@ public class DailyAdviceServer {
                 clientOutputStreams.add(writer);
 
                 // start a new thread that will read the messages sent by thi client and then send them to all connected clients
-                Thread t = new Thread(new ClientHandler(clientSocket));
+                Thread t = new Thread(new ClientHandler(clientSocket, maze));
                 t.start();
                 System.out.println("got a connection");
             }
