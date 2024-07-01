@@ -54,23 +54,24 @@ public class DailyAdviceServer {
         public void run() {
             // read messages from the server and print them to the console
             String message;
+            boolean hasWon = false;
             try {
                 while ((message = reader.readLine()) != null) {
                     if(message.equals("n"))
                     {
-                        maze.moveUp(position, token);
+                        hasWon = maze.moveUp(position, token);
                     }
                     else if(message.equals("d"))
                     {
-                        maze.moveDown(position, token);
+                        hasWon = maze.moveDown(position, token);
                     }
                     else if(message.equals("w"))
                     {
-                        maze.moveLeft(position, token);
+                        hasWon = maze.moveLeft(position, token);
                     }
                     else if(message.equals("e"))
                     {
-                        maze.moveRight(position, token);
+                        hasWon = maze.moveRight(position, token);
                     }
                     else
                     {
@@ -79,6 +80,11 @@ public class DailyAdviceServer {
                         writer.println("Invalid command");
                     }
                     tellEveryone(maze.show());
+                    if(hasWon)
+                    {
+                        tellEveryone(token + " HAS WON! QUIT OR CONTINUE PLAYING");
+                        // TODO: reset grid
+                    }
                 }
             }
             catch (Exception ex)
