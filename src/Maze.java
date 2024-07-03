@@ -113,13 +113,20 @@ public class Maze {
     public String show()
     {
         StringBuilder res = new StringBuilder();
-        for (char [] chars : grid) {
+        for (int i = 0; i < n; i++) {
             StringBuilder empty = new StringBuilder();
-            for (int i = 0; i < chars.length - 1; i++) {
-                empty.append(chars[i]).append(" ");
+            for (int j = 0; j < m - 1; j++) {
+                empty.append(grid[i][j]).append(" ");
             }
-            empty.append(chars[chars.length - 1]);
-            res.append(empty).append("\n");
+            empty.append(grid[i][n - 1]);
+            // if you're in the last row i then do not append a newline to empty
+            if(i != n - 1) {
+                res.append(empty).append("\n");
+            }
+            else
+            {
+                res.append(empty);
+            }
         }
         return res.toString();
     }

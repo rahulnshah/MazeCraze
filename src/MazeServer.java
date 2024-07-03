@@ -3,7 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
-public class DailyAdviceServer {
+public class MazeServer {
     ArrayList<PrintWriter> clientOutputStreams;
 
     ArrayList<ClientHandler> clients = new ArrayList<>();
@@ -64,7 +64,7 @@ public class DailyAdviceServer {
                     {
                         hasWon = maze.moveUp(position, token);
                     }
-                    else if(message.equals("d"))
+                    else if(message.equals("s"))
                     {
                         hasWon = maze.moveDown(position, token);
                     }
@@ -82,6 +82,7 @@ public class DailyAdviceServer {
                         PrintWriter writer = new PrintWriter(sock.getOutputStream());
                         writer.println("Invalid command");
                     }
+                    tellEveryone(token + ":");
                     tellEveryone(maze.show());
                     if(hasWon)
                     {
@@ -132,7 +133,7 @@ public class DailyAdviceServer {
 
     public static void main(String [] args)
     {
-        DailyAdviceServer server = new DailyAdviceServer();
+        MazeServer server = new MazeServer();
         server.go();
     }
 
