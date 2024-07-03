@@ -1,16 +1,27 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 public class DailyAdviceServer {
     ArrayList<PrintWriter> clientOutputStreams;
 
+    ArrayList<ClientHandler> clients = new ArrayList<>();
+
+    // Player positions and token are assigned on FCFS basis
+    Map<Integer, List<Integer>> positions = Map.of(
+            0,new ArrayList<>(Arrays.asList(0,2)),
+            1,new ArrayList<>(Arrays.asList(4,2))
+    );
+
+    Map<Integer, Character> tokens = Map.of(
+            0,'^',
+            1,'*'
+    );
+
     Maze maze;
+
+    boolean hasWon = false;
 
     public class ClientHandler implements Runnable {
         BufferedReader reader;
@@ -29,32 +40,24 @@ public class DailyAdviceServer {
                 InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
                 reader = new BufferedReader(isReader);
                 this.maze = maze;
-                // initialize the row and column position for this client
-                if(clientOutputStreams.size() == 1)
-                {
-                    // give first player to connect the position of the turtle
-                    this.position[0] = 0;
-                    this.position[1] = 2;
-                    this.token = '^';
-                }
-                else
-                {
-                    // give second player to connect the position of the hare
-                    this.position[0] = 4;
-                    this.position[1] = 2;
-                    this.token = '*';
-                }
+                // add it to the List
+                clients.add(this);
+                // set position
+                this.position[0] = positions.get(clients.indexOf(this)).get(0);
+                this.position[1] = positions.get(clients.indexOf(this)).get(1);
+                // set token
+                this.token = tokens.get(clients.indexOf(this));
             }
             catch (Exception ex)
             {
                 ex.printStackTrace();
             }
         }
+
         @Override
         public void run() {
             // read messages from the server and print them to the console
             String message;
-            boolean hasWon = false;
             try {
                 while ((message = reader.readLine()) != null) {
                     if(message.equals("n"))
@@ -83,7 +86,12 @@ public class DailyAdviceServer {
                     if(hasWon)
                     {
                         tellEveryone(token + " HAS WON! QUIT OR CONTINUE PLAYING");
-                        // TODO: reset grid
+                        // reset grid
+                        maze.initialize();
+                        // reset player position
+                        resetEveryone();
+                        // set hasWon to false
+                        hasWon = false;
                     }
                 }
             }
@@ -94,11 +102,22 @@ public class DailyAdviceServer {
         }
     }
 
+    public void resetEveryone()
+    {
+        for(int i = 0; i < clients.size(); i++)
+        {
+            ClientHandler client = clients.get(i);
+            client.position[0] = positions.get(i).get(0);
+            client.position[1] = positions.get(i).get(1);
+            client.token = tokens.get(i);
+        }
+    }
     private void tellEveryone(String message) {
         Iterator<PrintWriter> it = clientOutputStreams.iterator();
         while (it.hasNext())
         {
-            try{
+            try
+            {
                 PrintWriter writer = (PrintWriter) it.next();
                 writer.println((message));
                 // clear the output stream of any characters that may be or maybe not inside the stream
@@ -123,6 +142,9 @@ public class DailyAdviceServer {
         // Instantiate a single shared Maze object in the server class.
         // This instance will be accessed and modified by all client threads.
         maze = new Maze();
+        // initialize the maze
+        maze.initialize();
+
         try {
             ServerSocket serverSocket = new ServerSocket(5000);
 
@@ -133,9 +155,10 @@ public class DailyAdviceServer {
                 PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
                 // save output stream for that client
                 clientOutputStreams.add(writer);
-
                 // start a new thread that will read the messages sent by thi client and then send them to all connected clients
-                Thread t = new Thread(new ClientHandler(clientSocket, maze));
+                ClientHandler clientHandler = new ClientHandler(clientSocket, maze);
+
+                Thread t = new Thread(clientHandler);
                 t.start();
                 System.out.println("got a connection");
             }

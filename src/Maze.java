@@ -1,14 +1,22 @@
 
 public class Maze {
-    private char [][] grid = {
-            {'0', '0', '^', '0', '0'},
-            {'0', '0', '1', '1', '0'},
-            {'0', '1', '0', '1', '0'},
-            {'1', '0', '1', '0', '1'},
-            {'0', '0', '*', '0', '0'}
-    };
+    private char [][] grid;
+    int n, m;
 
-    private final int n = grid.length, m = grid[0].length;
+    public synchronized void initialize()
+    {
+        // make a new grid
+        grid = new char[][]{
+            {'0', '0', '^', '0', '0'},
+            {'0', '1', '0', '0', '0'},
+            {'0', '0', '0', '1', '0'},
+            {'1', '1', '0', '1', '1'},
+            {'0', '0', '*', '0', '0'}
+        };
+
+        n = grid.length;
+        m = grid[0].length;
+    }
     public synchronized boolean moveLeft(int [] position, char token)
     {
         int nrow = position[0];
@@ -107,9 +115,10 @@ public class Maze {
         StringBuilder res = new StringBuilder();
         for (char [] chars : grid) {
             StringBuilder empty = new StringBuilder();
-            for (char c : chars) {
-                empty.append(c).append(" ");
+            for (int i = 0; i < chars.length - 1; i++) {
+                empty.append(chars[i]).append(" ");
             }
+            empty.append(chars[chars.length - 1]);
             res.append(empty).append("\n");
         }
         return res.toString();
