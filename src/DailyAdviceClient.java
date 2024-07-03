@@ -65,7 +65,7 @@ public class DailyAdviceClient {
             String message;
             try {
                 while ((message = reader.readLine()) != null) {
-                    System.out.println("Server: " + message);
+                    System.out.println(message);
                 }
             }
             catch (Exception ex)
