@@ -63,30 +63,46 @@ public class MazeServer {
                     if(message.equals("n"))
                     {
                         hasWon = maze.moveUp(position, token);
+                        PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
+                        writer.println("YOU:");
+
                     }
                     else if(message.equals("s"))
                     {
                         hasWon = maze.moveDown(position, token);
+                        PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
+                        writer.println("YOU:");
+
                     }
                     else if(message.equals("w"))
                     {
                         hasWon = maze.moveLeft(position, token);
+                        PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
+                        writer.println("YOU:");
+
                     }
                     else if(message.equals("e"))
                     {
                         hasWon = maze.moveRight(position, token);
+                        PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
+                        writer.println("YOU:");
+
                     }
                     else
                     {
-                        // TODO: see if it is possible to get the write reference from the List using sock.getOutputStream()
-                        PrintWriter writer = new PrintWriter(sock.getOutputStream());
-                        writer.println("Invalid command");
+                        // get the writer reference from the List using sock.getOutputStream()
+                        PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
+                        writer.println("YOU: INVALID COMMAND!");
                     }
-                    tellEveryone(token + ":");
+                    // get the writer reference from the List using sock.getOutputStream()
+                    PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
+                    tellEveryoneBut(token + ":", writer);
                     tellEveryone(maze.show());
                     if(hasWon)
                     {
-                        tellEveryone(token + " HAS WON! QUIT OR CONTINUE PLAYING");
+                        writer.println("YOU HAVE WON!");
+                        tellEveryoneBut(token + " HAS WON!", writer);
+                        tellEveryone("QUIT OR CONTINUE PLAYING...");
                         // reset grid
                         maze.initialize();
                         // reset player position
@@ -94,6 +110,26 @@ public class MazeServer {
                         // set hasWon to false
                         hasWon = false;
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void tellEveryoneBut(String message, PrintWriter writer) {
+        Iterator<PrintWriter> it = clientOutputStreams.iterator();
+        while (it.hasNext())
+        {
+            try
+            {
+                PrintWriter aWriter = (PrintWriter) it.next();
+                if(aWriter != writer) {
+                    aWriter.println((message));
+                    // clear the output stream of any characters that may be or maybe not inside the stream
+                    aWriter.flush();
                 }
             }
             catch (Exception ex)
