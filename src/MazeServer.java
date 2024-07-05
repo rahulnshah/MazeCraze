@@ -29,6 +29,8 @@ public class MazeServer {
 
         int [] position = new int[2];
         Maze maze;
+        
+        PrintWriter writer;
 
         char token;
 
@@ -36,12 +38,13 @@ public class MazeServer {
         {
             try
             {
+                // add this handler to the List
+                clients.add(this);
                 sock = clientSocket;
                 InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
                 reader = new BufferedReader(isReader);
+                writer  = clientOutputStreams.get(clients.indexOf(this));;
                 this.maze = maze;
-                // add it to the List
-                clients.add(this);
                 // set position
                 this.position[0] = positions.get(clients.indexOf(this)).get(0);
                 this.position[1] = positions.get(clients.indexOf(this)).get(1);
@@ -63,39 +66,30 @@ public class MazeServer {
                     if(message.equals("n"))
                     {
                         hasWon = maze.moveUp(position, token);
-                        PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
                         writer.println("YOU:");
-
                     }
                     else if(message.equals("s"))
                     {
                         hasWon = maze.moveDown(position, token);
-                        PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
                         writer.println("YOU:");
-
                     }
                     else if(message.equals("w"))
                     {
                         hasWon = maze.moveLeft(position, token);
-                        PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
                         writer.println("YOU:");
-
                     }
                     else if(message.equals("e"))
                     {
                         hasWon = maze.moveRight(position, token);
-                        PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
                         writer.println("YOU:");
-
                     }
                     else
                     {
                         // get the writer reference from the List using sock.getOutputStream()
-                        PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
                         writer.println("YOU: INVALID COMMAND!");
                     }
                     // get the writer reference from the List using sock.getOutputStream()
-                    PrintWriter writer = clientOutputStreams.get(clients.indexOf(this));
+                    
                     tellEveryoneBut(token + ":", writer);
                     tellEveryone(maze.show());
                     if(hasWon)
