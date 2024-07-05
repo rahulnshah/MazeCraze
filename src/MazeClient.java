@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class DailyAdviceClient {
+public class MazeClient {
     BufferedReader reader;
     PrintWriter writer;
     Socket sock;
@@ -13,7 +13,7 @@ public class DailyAdviceClient {
     
     public static void main(String [] args)
     {
-        DailyAdviceClient client = new DailyAdviceClient();
+        MazeClient client = new MazeClient();
         client.go();
     }
 
