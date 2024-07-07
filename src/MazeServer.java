@@ -59,7 +59,6 @@ public class MazeServer {
 
         @Override
         public void run() {
-            // read messages from the server and print them to the console
             String message;
             try {
                 while ((message = reader.readLine()) != null) {
