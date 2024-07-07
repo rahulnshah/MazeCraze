@@ -59,6 +59,10 @@ public class MazeServer {
 
         @Override
         public void run() {
+            writer.println("WELCOME TO MazeCraze!");
+            writer.println(maze.show());
+            writer.println("PRESS N, S, W, E TO NAVIGATE THROUGH THE MAZE. YOU ARE " + token + ".");
+            writer.flush();
             String message;
             try {
                 while ((message = reader.readLine()) != null) {
@@ -87,13 +91,14 @@ public class MazeServer {
                         // get the writer reference from the List using sock.getOutputStream()
                         writer.println("YOU: INVALID COMMAND!");
                     }
-                    // get the writer reference from the List using sock.getOutputStream()
-                    
+                    // flush the writer
+                    writer.flush();
                     tellEveryoneBut(token + ":", writer);
                     tellEveryone(maze.show());
                     if(hasWon)
                     {
                         writer.println("YOU HAVE WON!");
+                        writer.flush();
                         tellEveryoneBut(token + " HAS WON!", writer);
                         tellEveryone("QUIT OR CONTINUE PLAYING...");
                         // reset grid
@@ -102,6 +107,15 @@ public class MazeServer {
                         resetEveryone();
                         // set hasWon to false
                         hasWon = false;
+                        // show welcome message
+                        for(ClientHandler client : clients)
+                        {
+                            PrintWriter writer = client.writer;
+                            writer.println("WELCOME TO MazeCraze!");
+                            writer.println(client.maze.show());
+                            writer.println("PRESS N, S, W, E TO NAVIGATE THROUGH THE MAZE. YOU ARE " + client.token + ".");
+                            writer.flush();
+                        }
                     }
                 }
             }
