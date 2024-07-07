@@ -1,8 +1,14 @@
 
 public class Maze {
+    private static Maze uniqueInstance = new Maze();
     private char [][] grid;
     int n, m;
 
+    private Maze(){}
+
+    public static Maze getInstance(){
+        return uniqueInstance;
+    }
     public synchronized void initialize()
     {
         // make a new grid
