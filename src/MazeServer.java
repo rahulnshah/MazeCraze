@@ -66,64 +66,61 @@ public class MazeServer {
             String message;
             try {
                 while ((message = reader.readLine()) != null) {
-                    if(message.equals("n"))
-                    {
+                    boolean moveMade = false;
+                    if (message.equalsIgnoreCase("n")) {
                         hasWon = maze.moveUp(position, token);
-                        writer.println("YOU:");
-                    }
-                    else if(message.equals("s"))
-                    {
+                        moveMade = true;
+                    } else if (message.equalsIgnoreCase("s")) {
                         hasWon = maze.moveDown(position, token);
-                        writer.println("YOU:");
-                    }
-                    else if(message.equals("w"))
-                    {
+                        moveMade = true;
+                    } else if (message.equalsIgnoreCase("w")) {
                         hasWon = maze.moveLeft(position, token);
-                        writer.println("YOU:");
-                    }
-                    else if(message.equals("e"))
-                    {
+                        moveMade = true;
+                    } else if (message.equalsIgnoreCase("e")) {
                         hasWon = maze.moveRight(position, token);
-                        writer.println("YOU:");
-                    }
-                    else
-                    {
-                        // get the writer reference from the List using sock.getOutputStream()
+                        moveMade = true;
+                    } else if (message.startsWith("see gold")) {
+                        int maxGoldAmtCanCollect = maze.callFindMaxGold(position);
+                        writer.println("YOU CAN COLLECT " + maxGoldAmtCanCollect + " UNITS OF GOLD AT CURRENT POSITION");
+                    } else {
                         writer.println("YOU: INVALID COMMAND!");
                     }
-                    // flush the writer
-                    writer.flush();
-                    tellEveryoneBut(token + ":", writer);
-                    tellEveryone(maze.show());
-                    if(hasWon)
-                    {
-                        writer.println("YOU HAVE WON!");
+
+                    if (moveMade) {
+                        writer.println("YOU:");
                         writer.flush();
-                        tellEveryoneBut(token + " HAS WON!", writer);
-                        tellEveryone("QUIT OR CONTINUE PLAYING...");
-                        // reset grid
-                        maze.initialize();
-                        // reset player position
-                        resetEveryone();
-                        // set hasWon to false
-                        hasWon = false;
-                        // show welcome message
-                        for(ClientHandler client : clients)
-                        {
-                            PrintWriter writer = client.writer;
-                            writer.println("WELCOME TO MazeCraze!");
-                            writer.println(client.maze.show());
-                            writer.println("PRESS N, S, W, E TO NAVIGATE THROUGH THE MAZE. YOU ARE " + client.token + ".");
+                        tellEveryoneBut(token + ":", writer);
+                        tellEveryone(maze.show());
+
+                        if (hasWon) {
+                            writer.println("YOU HAVE WON!");
                             writer.flush();
+                            tellEveryoneBut(token + " HAS WON!", writer);
+                            tellEveryone("QUIT OR CONTINUE PLAYING...");
+                            maze.initialize();
+                            resetEveryone();
+                            hasWon = false;
+                            for (ClientHandler client : clients) {
+                                PrintWriter writer = client.writer;
+                                writer.println("WELCOME TO MazeCraze!");
+                                writer.println(client.maze.show());
+                                writer.println("PRESS N, S, W, E TO NAVIGATE THROUGH THE MAZE. YOU ARE " + client.token + ".");
+                                writer.flush();
+                            }
+                            // if a player has won then no need to check if they can reach their destination.
+                            continue;
+                        }
+                        boolean canReach = maze.canReachDestination(position, token);
+                        if (!canReach) {
+                            writer.println("WARNING: YOU ARE STUCK AND CANNOT REACH YOUR DESTINATION!");
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
+
     }
 
     private void tellEveryoneBut(String message, PrintWriter writer) {
