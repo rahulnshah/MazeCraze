@@ -127,40 +127,46 @@ public class Maze {
         grid[row2][column2] = hold;
     }
 
-    public boolean canReachDestination(int[] position, char token)
+    public int shortestPathBinaryMatrix(int[] position, char token)
     {
-        int srow = position[0], scol = position[1];
+        int startRow = position[0], startColumn = position[1];
         int targetRow = (token == '^') ? n - 1 : 0;
+        char opponentToken = (token == '^') ? '*' : '^';
         int n = grid.length, m = grid[0].length;
         boolean [][] vis = new boolean[n][m];
-        Queue<int []> q = new LinkedList<>();
-        q.add(new int [] {srow, scol});
+        Queue<int []> queue = new LinkedList<>();
+        // Start from the initial point
+        queue.add(new int [] {startRow,startColumn,1});
+        vis[startRow][startColumn] = true;
 
         // to represent the 4 directions I could traverse in a 2D matrix, like a grid
-        int [] delRow = {0, 1, 0, -1};
-        int [] delCol = {-1, 0, 1, 0};
+        int [] deltaR = {0, 1, 0, -1};
+        int [] deltaC = {-1, 0, 1, 0};
 
-        while(!q.isEmpty()) {
-            // take out first cell
-            int row = q.peek()[0];
-            int col = q.peek()[1];
-            q.poll();
-            // if you found dest return true
-            if (row == targetRow) {
-                return true;
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            int currRow = current[0];
+            int currCol = current[1];
+            int w = current[2];
+            // Stop if we reach the end point
+            if (currRow == targetRow) {
+                return w;
             }
-            // explore it neighbors
-            for (int i = 0; i < 4; i++) { // only four directions
-                int r = row + delRow[i];
-                int c = col + delCol[i];
-                if (r >= 0 && r < n && c >= 0 && c < m && grid[r][c] == 0 && !vis[r][c]) {
-                    q.add(new int [] {r, c});
-                    vis[r][c] = true;
+
+            // Check each possible move
+            for (int i = 0; i < deltaR.length; i++) {
+                int newRow = currRow + deltaR[i];
+                int newCol = currCol + deltaC[i];
+
+                // Check if new cell is valid
+                if (newRow >= 0 && newRow < n && newCol >= 0 && newCol < m && grid[newRow][newCol] != '1' && grid[newRow][newCol] != opponentToken && !vis[newRow][newCol]) {
+                    vis[newRow][newCol] = true;
+                    queue.add(new int[]{newRow, newCol, w + 1});
                 }
             }
         }
-        // dest not reached
-        return false;
+        // If end point is unreachable, return -1
+        return -1;
     }
 
     public int findMaxGold(int r, int c, int n, int m)

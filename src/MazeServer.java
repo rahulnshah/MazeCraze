@@ -82,13 +82,18 @@ public class MazeServer {
                     } else if (message.startsWith("see gold")) {
                         int maxGoldAmtCanCollect = maze.callFindMaxGold(position);
                         writer.println("YOU CAN COLLECT " + maxGoldAmtCanCollect + " UNITS OF GOLD AT CURRENT POSITION");
-                    } else {
+                    }
+                    else if(message.startsWith("how far am i?"))
+                    {
+                        int distance = maze.shortestPathBinaryMatrix(position, token);
+                        writer.println("YOU ARE AT LEAST " + distance + " UNITS AWAY FROM DESTINATION AT CURRENT POSITION");
+                    }
+                    else {
                         writer.println("YOU: INVALID COMMAND!");
                     }
 
                     if (moveMade) {
                         writer.println("YOU:");
-                        writer.flush();
                         tellEveryoneBut(token + ":", writer);
                         tellEveryone(maze.show());
 
@@ -105,16 +110,10 @@ public class MazeServer {
                                 writer.println("WELCOME TO MazeCraze!");
                                 writer.println(client.maze.show());
                                 writer.println("PRESS N, S, W, E TO NAVIGATE THROUGH THE MAZE. YOU ARE " + client.token + ".");
-                                writer.flush();
                             }
-                            // if a player has won then no need to check if they can reach their destination.
-                            continue;
-                        }
-                        boolean canReach = maze.canReachDestination(position, token);
-                        if (!canReach) {
-                            writer.println("WARNING: YOU ARE STUCK AND CANNOT REACH YOUR DESTINATION!");
                         }
                     }
+                    writer.flush();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
