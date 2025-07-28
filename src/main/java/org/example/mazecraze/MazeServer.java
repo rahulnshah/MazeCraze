@@ -1,3 +1,5 @@
+package org.example.mazecraze;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -184,14 +186,14 @@ public class MazeServer {
     private void go() {
         clientOutputStreams = new ArrayList<>();
 
-        // Instantiate a single shared Maze object in the server class.
+        // Instantiate a single shared org.example.mazecraze.Maze object in the server class.
         // This instance will be accessed and modified by all client threads.
         maze = Maze.getInstance();
         // initialize the maze
         maze.initialize();
 
         try {
-            ServerSocket serverSocket = new ServerSocket(5000);
+            ServerSocket serverSocket = new ServerSocket(8080);
 
             while(true)
             {

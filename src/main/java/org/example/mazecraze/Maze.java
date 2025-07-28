@@ -1,3 +1,5 @@
+package org.example.mazecraze;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
