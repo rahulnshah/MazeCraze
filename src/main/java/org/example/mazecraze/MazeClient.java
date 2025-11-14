@@ -47,7 +47,7 @@ public class MazeClient {
 
     private void setUpNetworking() {
         try{
-            sock = new Socket("127.0.0.1", 5000);
+            sock = new Socket("127.0.0.1", 8080);
             InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
             // Set up input and output streams
             reader = new BufferedReader(streamReader);
