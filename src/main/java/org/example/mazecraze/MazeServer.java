@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
+import static org.example.mazecraze.MazeConstants.*;
+
 public class MazeServer {
     ArrayList<PrintWriter> clientOutputStreams;
 
@@ -61,57 +63,61 @@ public class MazeServer {
 
         @Override
         public void run() {
-            writer.println("WELCOME TO MazeCraze!");
+            writer.println(WELCOME_MESSAGE);
+            writer.println(MOVEMENT_PROMPT + token + ".");
             writer.println(maze.show());
-            writer.println("PRESS N, S, W, E TO NAVIGATE THROUGH THE MAZE. YOU ARE " + token + ".");
             writer.flush();
             String message;
             try {
                 while ((message = reader.readLine()) != null) {
                     boolean moveMade = false;
-                    if (message.equalsIgnoreCase("n")) {
-                        hasWon = maze.moveUp(position, token);
+                    if (message.equalsIgnoreCase(NORTH)) {
+                        maze.moveUp(position, token);
+                        hasWon = maze.isAtFinishLine(position, token);
                         moveMade = true;
-                    } else if (message.equalsIgnoreCase("s")) {
-                        hasWon = maze.moveDown(position, token);
+                    } else if (message.equalsIgnoreCase(SOUTH)) {
+                        maze.moveDown(position, token);
+                        hasWon = maze.isAtFinishLine(position, token);
                         moveMade = true;
-                    } else if (message.equalsIgnoreCase("w")) {
-                        hasWon = maze.moveLeft(position, token);
+                    } else if (message.equalsIgnoreCase(WEST)) {
+                        maze.moveLeft(position, token);
+                        hasWon = maze.isAtFinishLine(position, token);
                         moveMade = true;
-                    } else if (message.equalsIgnoreCase("e")) {
-                        hasWon = maze.moveRight(position, token);
+                    } else if (message.equalsIgnoreCase(EAST)) {
+                        maze.moveRight(position, token);
+                        hasWon = maze.isAtFinishLine(position, token);
                         moveMade = true;
-                    } else if (message.startsWith("see gold")) {
+                    } else if (message.startsWith(SEE_GOLD_COMMAND)) {
                         int maxGoldAmtCanCollect = maze.callFindMaxGold(position);
-                        writer.println("YOU CAN COLLECT " + maxGoldAmtCanCollect + " UNITS OF GOLD AT CURRENT POSITION");
+                        writer.println(GOLD_MESSAGE + maxGoldAmtCanCollect + GOLD_SUFFIX);
                     }
-                    else if(message.startsWith("how far am i?"))
+                    else if(message.startsWith(DISTANCE_COMMAND))
                     {
                         int distance = maze.shortestPathBinaryMatrix(position, token);
-                        writer.println("YOU ARE AT LEAST " + distance + " UNITS AWAY FROM DESTINATION AT CURRENT POSITION");
+                        writer.println(DISTANCE_MESSAGE + distance + DISTANCE_SUFFIX);
                     }
                     else {
-                        writer.println("YOU: INVALID COMMAND!");
+                        writer.println(INVALID_COMMAND);
                     }
 
                     if (moveMade) {
-                        writer.println("YOU:");
+                        writer.println(YOU_PREFIX);
                         tellEveryoneBut(token + ":", writer);
                         tellEveryone(maze.show());
 
                         if (hasWon) {
-                            writer.println("YOU HAVE WON!");
+                            writer.println(WIN_MESSAGE);
                             writer.flush();
                             tellEveryoneBut(token + " HAS WON!", writer);
-                            tellEveryone("QUIT OR CONTINUE PLAYING...");
+                            tellEveryone(CONTINUE_PROMPT);
                             maze.initialize();
                             resetEveryone();
                             hasWon = false;
                             for (ClientHandler client : clients) {
                                 PrintWriter writer = client.writer;
-                                writer.println("WELCOME TO MazeCraze!");
+                                writer.println(WELCOME_MESSAGE);
+                                writer.println(MOVEMENT_PROMPT + client.token + ".");
                                 writer.println(client.maze.show());
-                                writer.println("PRESS N, S, W, E TO NAVIGATE THROUGH THE MAZE. YOU ARE " + client.token + ".");
                             }
                         }
                     }
@@ -207,7 +213,7 @@ public class MazeServer {
 
                 Thread t = new Thread(clientHandler);
                 t.start();
-                System.out.println("got a connection");
+                System.out.println(SERVER_PING_MESSAGE);
             }
         } catch (IOException ex) {
             ex.printStackTrace();

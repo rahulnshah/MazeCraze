@@ -35,91 +35,76 @@ public class Maze {
         n = grid.length;
         m = grid[0].length;
     }
-    public synchronized boolean moveLeft(int [] position, char token)
+    public synchronized void moveLeft(int [] position, char token)
     {
-        int nrow = position[0];
-        int ncol = position[1] - 1;
+        int newRow = position[0];
+        int newCol = position[1] - 1;
         // TODO: need to add another condition that there is not a wall at grid[r][c]
-        if(ncol >= 0 && ncol < m && grid[nrow][ncol] == '0')
+        if(canMoveHorizontally(newCol) && isTile(newRow, newCol))
         {
             // swap
-            swap(position[0], position[1], nrow, ncol);
+            swap(position[0], position[1], newRow, newCol);
             // Update col
-            position[1] = ncol;
+            position[1] = newCol;
         }
+    }
+
+    public boolean isAtFinishLine(int[] position, char token) {
         // check if any player hasWon
         if(token == '*')
         {
             return position[0] == 0;
         }
-        else
+        return position[0] == m - 1;
+    }
+
+    public synchronized void moveRight(int [] position, char token)
+    {
+        int newRow = position[0];
+        int newCol = position[1] + 1;
+        if(canMoveHorizontally(newCol) && isTile(newRow, newCol))
         {
-            return position[0] == m - 1;
+            // swap
+            swap(position[0], position[1], newRow, newCol);
+            position[1] = newCol;
+
         }
     }
 
-    public synchronized boolean moveRight(int [] position, char token)
+    public synchronized void moveDown(int [] position, char token)
     {
-        int nrow = position[0];
-        int ncol = position[1] + 1;
-        if(ncol >= 0 && ncol < m && grid[nrow][ncol] == '0')
+        int newRow = position[0] + 1;
+        int newCol = position[1];
+        if(canMoveVertically(newRow) && isTile(newRow, newCol))
         {
             // swap
-            swap(position[0], position[1], nrow, ncol);
-            position[1] = ncol;
-
-        }
-
-        if(token == '*')
-        {
-            return position[0] == 0;
-        }
-        else
-        {
-            return position[0] == m - 1;
-        }
-    }
-
-    public synchronized boolean moveDown(int [] position, char token)
-    {
-        int nrow = position[0] + 1;
-        int ncol = position[1];
-        if(nrow >= 0 && nrow < n && grid[nrow][ncol] == '0')
-        {
-            // swap
-            swap(position[0], position[1], nrow, ncol);
+            swap(position[0], position[1], newRow, newCol);
             // Update row
-            position[0] = nrow;
-        }
-        // check if any player hasWon
-        if(token == '*')
-        {
-            return position[0] == 0;
-        }
-        else
-        {
-            return position[0] == m - 1;
+            position[0] = newRow;
         }
     }
 
-    public synchronized boolean moveUp(int [] position, char token)
+    public synchronized void moveUp(int [] position, char token)
     {
-        int nrow = position[0] - 1;
-        int ncol = position[1];
-        if(nrow >= 0 && nrow < n && grid[nrow][ncol] == '0')
+        int newRow = position[0] - 1;
+        int newCol = position[1];
+        if(canMoveVertically(newRow) && isTile(newRow, newCol))
         {
             // swap
-            swap(position[0], position[1], nrow, ncol);
-            position[0] = nrow;
+            swap(position[0], position[1], newRow, newCol);
+            position[0] = newRow;
         }
-        if(token == '*')
-        {
-            return position[0] == 0;
-        }
-        else
-        {
-            return position[0] == m - 1;
-        }
+    }
+
+    private boolean isTile(int newRow, int newCol) {
+        return grid[newRow][newCol] == '0';
+    }
+
+    private boolean canMoveHorizontally(int newCol) {
+        return newCol >= 0 && newCol < m;
+    }
+    private boolean canMoveVertically(int newRow) {
+        return newRow >= 0 && newRow < n;
     }
 
     public void swap(int row1, int column1, int row2, int column2)
