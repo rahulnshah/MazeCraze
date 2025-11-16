@@ -64,8 +64,8 @@ public class MazeServer {
         @Override
         public void run() {
             writer.println(WELCOME_MESSAGE);
-            writer.println(maze.show());
             writer.println(MOVEMENT_PROMPT + token + ".");
+            writer.println(maze.show());
             writer.flush();
             String message;
             try {
@@ -116,8 +116,8 @@ public class MazeServer {
                             for (ClientHandler client : clients) {
                                 PrintWriter writer = client.writer;
                                 writer.println(WELCOME_MESSAGE);
-                                writer.println(client.maze.show());
                                 writer.println(MOVEMENT_PROMPT + client.token + ".");
+                                writer.println(client.maze.show());
                             }
                         }
                     }
