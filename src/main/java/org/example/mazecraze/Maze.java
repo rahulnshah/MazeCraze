@@ -40,7 +40,7 @@ public class Maze {
         int nrow = position[0];
         int ncol = position[1] - 1;
         // TODO: need to add another condition that there is not a wall at grid[r][c]
-        if(ncol >= 0 && ncol < m && grid[nrow][ncol] == '0')
+        if(canMoveHorizontally(ncol) && isTile(nrow, ncol))
         {
             // swap
             swap(position[0], position[1], nrow, ncol);
@@ -62,7 +62,7 @@ public class Maze {
     {
         int nrow = position[0];
         int ncol = position[1] + 1;
-        if(ncol >= 0 && ncol < m && grid[nrow][ncol] == '0')
+        if(canMoveHorizontally(ncol) && isTile(nrow, ncol))
         {
             // swap
             swap(position[0], position[1], nrow, ncol);
@@ -84,7 +84,7 @@ public class Maze {
     {
         int nrow = position[0] + 1;
         int ncol = position[1];
-        if(nrow >= 0 && nrow < n && grid[nrow][ncol] == '0')
+        if(canMoveVertically(nrow) && isTile(nrow, ncol))
         {
             // swap
             swap(position[0], position[1], nrow, ncol);
@@ -106,7 +106,7 @@ public class Maze {
     {
         int nrow = position[0] - 1;
         int ncol = position[1];
-        if(nrow >= 0 && nrow < n && grid[nrow][ncol] == '0')
+        if(canMoveVertically(nrow) && isTile(nrow, ncol))
         {
             // swap
             swap(position[0], position[1], nrow, ncol);
@@ -120,6 +120,17 @@ public class Maze {
         {
             return position[0] == m - 1;
         }
+    }
+
+    private boolean isTile(int nrow, int ncol) {
+        return grid[nrow][ncol] == '0';
+    }
+
+    private boolean canMoveHorizontally(int ncol) {
+        return ncol >= 0 && ncol < m;
+    }
+    private boolean canMoveVertically(int nrow) {
+        return nrow >= 0 && nrow < n;
     }
 
     public void swap(int row1, int column1, int row2, int column2)
