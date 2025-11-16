@@ -72,16 +72,20 @@ public class MazeServer {
                 while ((message = reader.readLine()) != null) {
                     boolean moveMade = false;
                     if (message.equalsIgnoreCase(NORTH)) {
-                        hasWon = maze.moveUp(position, token);
+                        maze.moveUp(position, token);
+                        hasWon = maze.isAtFinishLine(position, token);
                         moveMade = true;
                     } else if (message.equalsIgnoreCase(SOUTH)) {
-                        hasWon = maze.moveDown(position, token);
+                        maze.moveDown(position, token);
+                        hasWon = maze.isAtFinishLine(position, token);
                         moveMade = true;
                     } else if (message.equalsIgnoreCase(WEST)) {
-                        hasWon = maze.moveLeft(position, token);
+                        maze.moveLeft(position, token);
+                        hasWon = maze.isAtFinishLine(position, token);
                         moveMade = true;
                     } else if (message.equalsIgnoreCase(EAST)) {
-                        hasWon = maze.moveRight(position, token);
+                        maze.moveRight(position, token);
+                        hasWon = maze.isAtFinishLine(position, token);
                         moveMade = true;
                     } else if (message.startsWith(SEE_GOLD_COMMAND)) {
                         int maxGoldAmtCanCollect = maze.callFindMaxGold(position);

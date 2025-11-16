@@ -35,7 +35,7 @@ public class Maze {
         n = grid.length;
         m = grid[0].length;
     }
-    public synchronized boolean moveLeft(int [] position, char token)
+    public synchronized void moveLeft(int [] position, char token)
     {
         int nrow = position[0];
         int ncol = position[1] - 1;
@@ -47,18 +47,18 @@ public class Maze {
             // Update col
             position[1] = ncol;
         }
+    }
+
+    public boolean isAtFinishLine(int[] position, char token) {
         // check if any player hasWon
         if(token == '*')
         {
             return position[0] == 0;
         }
-        else
-        {
-            return position[0] == m - 1;
-        }
+        return position[0] == m - 1;
     }
 
-    public synchronized boolean moveRight(int [] position, char token)
+    public synchronized void moveRight(int [] position, char token)
     {
         int nrow = position[0];
         int ncol = position[1] + 1;
@@ -69,18 +69,9 @@ public class Maze {
             position[1] = ncol;
 
         }
-
-        if(token == '*')
-        {
-            return position[0] == 0;
-        }
-        else
-        {
-            return position[0] == m - 1;
-        }
     }
 
-    public synchronized boolean moveDown(int [] position, char token)
+    public synchronized void moveDown(int [] position, char token)
     {
         int nrow = position[0] + 1;
         int ncol = position[1];
@@ -91,18 +82,9 @@ public class Maze {
             // Update row
             position[0] = nrow;
         }
-        // check if any player hasWon
-        if(token == '*')
-        {
-            return position[0] == 0;
-        }
-        else
-        {
-            return position[0] == m - 1;
-        }
     }
 
-    public synchronized boolean moveUp(int [] position, char token)
+    public synchronized void moveUp(int [] position, char token)
     {
         int nrow = position[0] - 1;
         int ncol = position[1];
@@ -111,14 +93,6 @@ public class Maze {
             // swap
             swap(position[0], position[1], nrow, ncol);
             position[0] = nrow;
-        }
-        if(token == '*')
-        {
-            return position[0] == 0;
-        }
-        else
-        {
-            return position[0] == m - 1;
         }
     }
 
