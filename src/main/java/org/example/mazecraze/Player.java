@@ -12,7 +12,7 @@ public class Player {
     {
     }
 
-    public synchronized void moveLeft()
+    public void moveLeft()
     {
         int newRow = row;
         int newCol = col - 1;
@@ -26,7 +26,7 @@ public class Player {
         }
     }
 
-    public synchronized void moveRight()
+    public void moveRight()
     {
         int newRow = row;
         int newCol = col + 1;
@@ -38,7 +38,7 @@ public class Player {
         }
     }
 
-    public synchronized void moveDown()
+    public void moveDown()
     {
         int newRow = row + 1;
         int newCol = col;
@@ -51,7 +51,7 @@ public class Player {
         }
     }
 
-    public synchronized void moveUp()
+    public void moveUp()
     {
         int newRow = row - 1;
         int newCol = col;
@@ -63,7 +63,7 @@ public class Player {
         }
     }
 
-    public synchronized boolean isAtFinishLine() {
+    public boolean isAtFinishLine() {
         // check if any player hasWon
         if(token == '*')
         {
@@ -80,30 +80,30 @@ public class Player {
     private boolean canMoveVertically(int newRow) {
         return newRow >= 0 && newRow < maze.getRows();
     }
-    public synchronized void setRow(int row)
+    public void setRow(int row)
     {
         this.row = row;
     }
 
-    public synchronized void setCol(int col)
+    public void setCol(int col)
     {
         this.col = col;
     }
-    public synchronized void setToken(char token)
+    public void setToken(char token)
     {
         this.token = token;
     }
 
-    public synchronized int getRow()
+    public int getRow()
     {
         return row;
     }
 
-    public synchronized int getCol()
+    public int getCol()
     {
         return col;
     }
-    public synchronized char getToken(){
+    public char getToken(){
         return token;
     }
 }
