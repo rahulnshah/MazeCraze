@@ -55,7 +55,7 @@ public class Maze {
         grid[row2][column2] = hold;
     }
 
-    public int shortestPathBinaryMatrix(int startRow, int startColumn, char token)
+    public synchronized int shortestPathBinaryMatrix(int startRow, int startColumn, char token)
     {
         int targetRow = (token == '^') ? n - 1 : 0;
         char opponentToken = (token == '^') ? '*' : '^';
@@ -96,7 +96,7 @@ public class Maze {
         return -1;
     }
 
-    public int findMaxGold(int r, int c, int n, int m)
+    private int findMaxGold(int r, int c, int n, int m)
     {
         /*
         Edge cases to handle:
@@ -119,11 +119,11 @@ public class Maze {
         return (gridOfGold[r][c] - '0') + Math.max(left, Math.max(right, Math.max(up, down)));
     }
 
-    public int callFindMaxGold(int currRow, int currCol)
+    public synchronized int callFindMaxGold(int currRow, int currCol)
     {
         return findMaxGold(currRow, currCol, n, m);
     }
-    public String show()
+    public synchronized String show()
     {
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < n; i++) {
