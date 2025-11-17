@@ -7,7 +7,7 @@ public class Maze {
     private static Maze uniqueInstance = new Maze();
     private char [][] grid;
     private int [][] gridOfGold;
-    int n, m;
+    private int n, m;
 
     private Maze(){}
 
@@ -35,88 +35,28 @@ public class Maze {
         n = grid.length;
         m = grid[0].length;
     }
-    public synchronized void moveLeft(int [] position, char token)
-    {
-        int newRow = position[0];
-        int newCol = position[1] - 1;
-        // TODO: need to add another condition that there is not a wall at grid[r][c]
-        if(canMoveHorizontally(newCol) && isTile(newRow, newCol))
-        {
-            // swap
-            swap(position[0], position[1], newRow, newCol);
-            // Update col
-            position[1] = newCol;
-        }
-    }
 
-    public boolean isAtFinishLine(int[] position, char token) {
-        // check if any player hasWon
-        if(token == '*')
-        {
-            return position[0] == 0;
-        }
-        return position[0] == m - 1;
-    }
-
-    public synchronized void moveRight(int [] position, char token)
-    {
-        int newRow = position[0];
-        int newCol = position[1] + 1;
-        if(canMoveHorizontally(newCol) && isTile(newRow, newCol))
-        {
-            // swap
-            swap(position[0], position[1], newRow, newCol);
-            position[1] = newCol;
-
-        }
-    }
-
-    public synchronized void moveDown(int [] position, char token)
-    {
-        int newRow = position[0] + 1;
-        int newCol = position[1];
-        if(canMoveVertically(newRow) && isTile(newRow, newCol))
-        {
-            // swap
-            swap(position[0], position[1], newRow, newCol);
-            // Update row
-            position[0] = newRow;
-        }
-    }
-
-    public synchronized void moveUp(int [] position, char token)
-    {
-        int newRow = position[0] - 1;
-        int newCol = position[1];
-        if(canMoveVertically(newRow) && isTile(newRow, newCol))
-        {
-            // swap
-            swap(position[0], position[1], newRow, newCol);
-            position[0] = newRow;
-        }
-    }
-
-    private boolean isTile(int newRow, int newCol) {
+    public synchronized boolean hasTile(int newRow, int newCol) {
         return grid[newRow][newCol] == '0';
     }
 
-    private boolean canMoveHorizontally(int newCol) {
-        return newCol >= 0 && newCol < m;
-    }
-    private boolean canMoveVertically(int newRow) {
-        return newRow >= 0 && newRow < n;
+    public synchronized int getColumns() {
+        return m;
     }
 
-    public void swap(int row1, int column1, int row2, int column2)
+    public synchronized int getRows(){
+        return n;
+    }
+
+    public synchronized void swap(int row1, int column1, int row2, int column2)
     {
         char hold = grid[row1][column1];
         grid[row1][column1] = grid[row2][column2];
         grid[row2][column2] = hold;
     }
 
-    public int shortestPathBinaryMatrix(int[] position, char token)
+    public int shortestPathBinaryMatrix(int startRow, int startColumn, char token)
     {
-        int startRow = position[0], startColumn = position[1];
         int targetRow = (token == '^') ? n - 1 : 0;
         char opponentToken = (token == '^') ? '*' : '^';
         int n = grid.length, m = grid[0].length;
@@ -179,9 +119,9 @@ public class Maze {
         return (gridOfGold[r][c] - '0') + Math.max(left, Math.max(right, Math.max(up, down)));
     }
 
-    public int callFindMaxGold(int [] position)
+    public int callFindMaxGold(int currRow, int currCol)
     {
-        return findMaxGold(position[0], position[1], n, m);
+        return findMaxGold(currRow, currCol, n, m);
     }
     public String show()
     {
