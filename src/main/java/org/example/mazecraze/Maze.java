@@ -1,18 +1,19 @@
 package org.example.mazecraze;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.*;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Maze {
-    private static Maze uniqueInstance = new Maze();
     private char [][] grid;
     private int n, m;
     private Map<List<Integer>, Integer> goldAmounts;
 
-    private Maze(){}
-
-    public static Maze getInstance(){
-        return uniqueInstance;
-    }
     public synchronized void initialize()
     {
         // make a new grid
@@ -33,6 +34,7 @@ public class Maze {
         goldAmounts.put(Arrays.asList(0,4), 0);
         goldAmounts.put(Arrays.asList(1,0), 0);
         goldAmounts.put(Arrays.asList(1,2), 3);
+        goldAmounts.put(Arrays.asList(1,3), 0);
         goldAmounts.put(Arrays.asList(1,4), 9);
         goldAmounts.put(Arrays.asList(2,0), 10);
         goldAmounts.put(Arrays.asList(2,1), 0);

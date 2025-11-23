@@ -176,11 +176,6 @@ public class MazeServer {
         }
     }
 
-    public void suggestClosestPath()
-    {
-
-    }
-
     public static void main(String [] args)
     {
         MazeServer server = new MazeServer();
@@ -192,7 +187,7 @@ public class MazeServer {
 
         // Instantiate a single shared org.example.mazecraze.Maze object in the server class.
         // This instance will be accessed and modified by all client threads.
-        maze = Maze.getInstance();
+        maze = new Maze();
         // initialize the maze
         maze.initialize();
 
