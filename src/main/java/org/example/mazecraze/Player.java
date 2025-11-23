@@ -76,11 +76,11 @@ public class Player {
         return row == maze.getColumns() - 1;
     }
 
-    private boolean canMoveHorizontally(int newCol) {
+    public boolean canMoveHorizontally(int newCol) {
         return newCol >= 0 && newCol < maze.getColumns();
     }
 
-    private boolean canMoveVertically(int newRow) {
+    public boolean canMoveVertically(int newRow) {
         return newRow >= 0 && newRow < maze.getRows();
     }
 
