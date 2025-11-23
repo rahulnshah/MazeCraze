@@ -38,6 +38,7 @@ public class Maze {
         goldAmounts.put(Arrays.asList(2,1), 0);
         goldAmounts.put(Arrays.asList(2,2), 0);
         goldAmounts.put(Arrays.asList(2,4), 1);
+        goldAmounts.put(Arrays.asList(3,2), 0);
         goldAmounts.put(Arrays.asList(4,0), 7);
         goldAmounts.put(Arrays.asList(4,1), 0);
         goldAmounts.put(Arrays.asList(4,2), 4);

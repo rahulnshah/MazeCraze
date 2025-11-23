@@ -10,7 +10,12 @@ public class Player {
     private int row;
     private int col;
     private char token;
-    private Maze maze = Maze.getInstance();
+    private Maze maze;
+
+    public Player(Maze maze)
+    {
+        this.maze = maze;
+    }
 
     public void moveLeft()
     {
