@@ -207,7 +207,7 @@ public class MazeServer {
                 // save output stream for that client
                 clientOutputStreams.add(writer);
                 // start a new thread that will read the messages sent by thi client and then send them to all connected clients
-                ClientHandler clientHandler = new ClientHandler(clientSocket, maze, new Player());
+                ClientHandler clientHandler = new ClientHandler(clientSocket, maze, new Player(maze));
 
                 Thread t = new Thread(clientHandler);
                 t.start();
