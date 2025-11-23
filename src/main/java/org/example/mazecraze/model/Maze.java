@@ -1,4 +1,4 @@
-package org.example.mazecraze;
+package org.example.mazecraze.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

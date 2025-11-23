@@ -1,4 +1,4 @@
-package org.example.mazecraze;
+package org.example.mazecraze.constants;
 
 public class MazeConstants {
     // Welcome and gameplay messages
