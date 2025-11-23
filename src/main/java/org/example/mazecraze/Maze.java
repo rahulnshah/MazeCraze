@@ -1,13 +1,12 @@
 package org.example.mazecraze;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Maze {
     private static Maze uniqueInstance = new Maze();
     private char [][] grid;
-    private int [][] gridOfGold;
     private int n, m;
+    private Map<List<Integer>, Integer> goldAmounts;
 
     private Maze(){}
 
@@ -18,20 +17,33 @@ public class Maze {
     {
         // make a new grid
         grid = new char[][]{
-            {'0', '0', '^', '0', '0'},
+            {'1', '0', '^', '0', '0'},
             {'0', '1', '0', '0', '0'},
             {'0', '0', '0', '1', '0'},
             {'1', '1', '0', '1', '1'},
             {'0', '0', '*', '0', '0'}
         };
 
-        gridOfGold = new int [][]{
-                {'0', '0', '^', '0', '0'},
-                {'0', '1', '0', '0', '0'},
-                {'0', '0', '0', '1', '0'},
-                {'1', '1', '0', '1', '1'},
-                {'0', '0', '*', '0', '0'}
-        };
+
+        goldAmounts = new HashMap<>();
+        goldAmounts.put(Arrays.asList(0,0), 6);
+        goldAmounts.put(Arrays.asList(0,1), 2);
+        goldAmounts.put(Arrays.asList(0,2), 4);
+        goldAmounts.put(Arrays.asList(0,3), 0);
+        goldAmounts.put(Arrays.asList(0,4), 0);
+        goldAmounts.put(Arrays.asList(1,0), 0);
+        goldAmounts.put(Arrays.asList(1,2), 3);
+        goldAmounts.put(Arrays.asList(1,4), 9);
+        goldAmounts.put(Arrays.asList(2,0), 10);
+        goldAmounts.put(Arrays.asList(2,1), 0);
+        goldAmounts.put(Arrays.asList(2,2), 0);
+        goldAmounts.put(Arrays.asList(2,4), 1);
+        goldAmounts.put(Arrays.asList(4,0), 7);
+        goldAmounts.put(Arrays.asList(4,1), 0);
+        goldAmounts.put(Arrays.asList(4,2), 4);
+        goldAmounts.put(Arrays.asList(4,3), 4);
+        goldAmounts.put(Arrays.asList(4,4), 8);
+
         n = grid.length;
         m = grid[0].length;
     }
@@ -96,32 +108,35 @@ public class Maze {
         return -1;
     }
 
-    private int findMaxGold(int r, int c, int n, int m)
+    private int findMaxGold(int r, int c, int n, int m, boolean [][] vis, char opponentToken)
     {
         /*
         Edge cases to handle:
         1) out of bounds - return 0 gold
         2) vis at pos(r,c) == true, return 0
-        3) pos(r,c) == 0, return 0
+        3) wall at (r,c) return 0
+        4) opponent token at (r,c) return 0
+        5) no gold at (r,c) return 0
         */
-        if(r < 0 || c < 0 || r >= n || c >= m || gridOfGold[r][c] == '0'){
+        if(r < 0 || c < 0 || r >= n || c >= m || grid[r][c] == '1' || grid[r][c] == opponentToken || vis[r][c] || !goldAmounts.containsKey(Arrays.asList(r,c))){
             return 0;
         }
-        int goldAmt = gridOfGold[r][c] - '0';
-        gridOfGold[r][c] = '0';
-        int left = findMaxGold(r, c - 1, n, m);
-        int right = findMaxGold(r, c + 1, n, m);
-        int up = findMaxGold(r - 1, c, n, m);
-        int down = findMaxGold(r + 1, c, n, m);
-        // mark current pos as vis
-        gridOfGold[r][c] = String.valueOf(goldAmt).charAt(0);
+        int goldAmt = goldAmounts.get(Arrays.asList(r,c));
+        vis[r][c] = true;
+        int left = findMaxGold(r, c - 1, n, m, vis, opponentToken);
+        int right = findMaxGold(r, c + 1, n, m, vis, opponentToken);
+        int up = findMaxGold(r - 1, c, n, m, vis, opponentToken);
+        int down = findMaxGold(r + 1, c, n, m, vis, opponentToken);
+        vis[r][c] = false;
         // take the max
-        return (gridOfGold[r][c] - '0') + Math.max(left, Math.max(right, Math.max(up, down)));
+        return goldAmt + Math.max(left, Math.max(right, Math.max(up, down)));
     }
 
-    public synchronized int callFindMaxGold(int currRow, int currCol)
+    public synchronized int getMaximumGold(int currRow, int currCol, char token)
     {
-        return findMaxGold(currRow, currCol, n, m);
+        char opponentToken = (token == '^') ? '*' : '^';
+        boolean [][] vis = new boolean[n][m];
+        return findMaxGold(currRow, currCol, n, m, vis, opponentToken);
     }
     public synchronized String show()
     {

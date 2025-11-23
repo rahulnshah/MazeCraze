@@ -85,11 +85,11 @@ public class MazeServer {
                         player.moveRight();
                         hasWon = player.isAtFinishLine();
                         moveMade = true;
-                    } else if (message.startsWith(SEE_GOLD_COMMAND)) {
-                        int maxGoldAmtCanCollect = maze.callFindMaxGold(player.getRow(), player.getCol());
+                    } else if (message.equalsIgnoreCase(SEE_GOLD_COMMAND)) {
+                        int maxGoldAmtCanCollect = maze.getMaximumGold(player.getRow(), player.getCol(), player.getToken());
                         writer.println(GOLD_MESSAGE + maxGoldAmtCanCollect + GOLD_SUFFIX);
                     }
-                    else if(message.startsWith(DISTANCE_COMMAND))
+                    else if(message.equalsIgnoreCase(DISTANCE_COMMAND))
                     {
                         int distance = maze.shortestPathBinaryMatrix(player.getRow(), player.getCol(), player.getToken());
                         writer.println(DISTANCE_MESSAGE + distance + DISTANCE_SUFFIX);
