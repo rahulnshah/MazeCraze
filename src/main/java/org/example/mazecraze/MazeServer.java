@@ -1,11 +1,14 @@
 package org.example.mazecraze;
 
+import org.example.mazecraze.model.Maze;
+import org.example.mazecraze.model.Player;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
-import static org.example.mazecraze.MazeConstants.*;
+import static org.example.mazecraze.constants.MazeConstants.*;
 
 public class MazeServer {
     ArrayList<PrintWriter> clientOutputStreams;
@@ -185,7 +188,7 @@ public class MazeServer {
     private void go() {
         clientOutputStreams = new ArrayList<>();
 
-        // Instantiate a single shared org.example.mazecraze.Maze object in the server class.
+        // Instantiate a single shared org.example.mazecraze.model.Maze object in the server class.
         // This instance will be accessed and modified by all client threads.
         maze = new Maze();
         // initialize the maze
