@@ -1,22 +1,21 @@
 package org.example.mazecraze;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Player {
     private int row;
     private int col;
     private char token;
     private Maze maze = Maze.getInstance();
 
-    public Player()
-    {
-    }
-
     public void moveLeft()
     {
         int newRow = row;
         int newCol = col - 1;
-        // TODO: need to add another condition that there is not a wall at grid[r][c]
         if(canMoveHorizontally(newCol) && maze.hasTile(newRow, newCol))
         {
             // swap
@@ -72,7 +71,6 @@ public class Player {
         return row == maze.getColumns() - 1;
     }
 
-
     private boolean canMoveHorizontally(int newCol) {
         return newCol >= 0 && newCol < maze.getColumns();
     }
@@ -80,30 +78,5 @@ public class Player {
     private boolean canMoveVertically(int newRow) {
         return newRow >= 0 && newRow < maze.getRows();
     }
-    public void setRow(int row)
-    {
-        this.row = row;
-    }
 
-    public void setCol(int col)
-    {
-        this.col = col;
-    }
-    public void setToken(char token)
-    {
-        this.token = token;
-    }
-
-    public int getRow()
-    {
-        return row;
-    }
-
-    public int getCol()
-    {
-        return col;
-    }
-    public char getToken(){
-        return token;
-    }
 }
