@@ -30,15 +30,11 @@ public class MazeServer {
     public class ClientHandler implements Runnable {
         BufferedReader reader;
         Socket sock;
-
-        int [] position = new int[2];
+        Player player;
         Maze maze;
-        
         PrintWriter writer;
 
-        char token;
-
-        public ClientHandler(Socket clientSocket, Maze maze)
+        public ClientHandler(Socket clientSocket, Maze maze, Player player)
         {
             try
             {
@@ -48,12 +44,13 @@ public class MazeServer {
                 InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
                 reader = new BufferedReader(isReader);
                 writer  = clientOutputStreams.get(clients.indexOf(this));;
+                this.player = player;
                 this.maze = maze;
                 // set position
-                this.position[0] = positions.get(clients.indexOf(this)).get(0);
-                this.position[1] = positions.get(clients.indexOf(this)).get(1);
+                this.player.setRow(positions.get(clients.indexOf(this)).get(0));
+                this.player.setCol(positions.get(clients.indexOf(this)).get(1));
                 // set token
-                this.token = tokens.get(clients.indexOf(this));
+                this.player.setToken(tokens.get(clients.indexOf(this)));
             }
             catch (Exception ex)
             {
@@ -64,36 +61,37 @@ public class MazeServer {
         @Override
         public void run() {
             writer.println(WELCOME_MESSAGE);
-            writer.println(MOVEMENT_PROMPT + token + ".");
+            writer.println(MOVEMENT_PROMPT + player.getToken() + ".");
             writer.println(maze.show());
             writer.flush();
             String message;
             try {
                 while ((message = reader.readLine()) != null) {
                     boolean moveMade = false;
+                    char token = player.getToken();
                     if (message.equalsIgnoreCase(NORTH)) {
-                        maze.moveUp(position, token);
-                        hasWon = maze.isAtFinishLine(position, token);
+                        player.moveUp();
+                        hasWon = player.isAtFinishLine();
                         moveMade = true;
                     } else if (message.equalsIgnoreCase(SOUTH)) {
-                        maze.moveDown(position, token);
-                        hasWon = maze.isAtFinishLine(position, token);
+                        player.moveDown();
+                        hasWon = player.isAtFinishLine();
                         moveMade = true;
                     } else if (message.equalsIgnoreCase(WEST)) {
-                        maze.moveLeft(position, token);
-                        hasWon = maze.isAtFinishLine(position, token);
+                        player.moveLeft();
+                        hasWon = player.isAtFinishLine();
                         moveMade = true;
                     } else if (message.equalsIgnoreCase(EAST)) {
-                        maze.moveRight(position, token);
-                        hasWon = maze.isAtFinishLine(position, token);
+                        player.moveRight();
+                        hasWon = player.isAtFinishLine();
                         moveMade = true;
-                    } else if (message.startsWith(SEE_GOLD_COMMAND)) {
-                        int maxGoldAmtCanCollect = maze.callFindMaxGold(position);
+                    } else if (message.equalsIgnoreCase(SEE_GOLD_COMMAND)) {
+                        int maxGoldAmtCanCollect = maze.getMaximumGold(player.getRow(), player.getCol(), player.getToken());
                         writer.println(GOLD_MESSAGE + maxGoldAmtCanCollect + GOLD_SUFFIX);
                     }
-                    else if(message.startsWith(DISTANCE_COMMAND))
+                    else if(message.equalsIgnoreCase(DISTANCE_COMMAND))
                     {
-                        int distance = maze.shortestPathBinaryMatrix(position, token);
+                        int distance = maze.shortestPathBinaryMatrix(player.getRow(), player.getCol(), player.getToken());
                         writer.println(DISTANCE_MESSAGE + distance + DISTANCE_SUFFIX);
                     }
                     else {
@@ -116,7 +114,7 @@ public class MazeServer {
                             for (ClientHandler client : clients) {
                                 PrintWriter writer = client.writer;
                                 writer.println(WELCOME_MESSAGE);
-                                writer.println(MOVEMENT_PROMPT + client.token + ".");
+                                writer.println(MOVEMENT_PROMPT + token + ".");
                                 writer.println(client.maze.show());
                             }
                         }
@@ -155,9 +153,9 @@ public class MazeServer {
         for(int i = 0; i < clients.size(); i++)
         {
             ClientHandler client = clients.get(i);
-            client.position[0] = positions.get(i).get(0);
-            client.position[1] = positions.get(i).get(1);
-            client.token = tokens.get(i);
+            client.player.setRow(positions.get(i).get(0));
+            client.player.setCol(positions.get(i).get(1));
+            client.player.setToken(tokens.get(i));
         }
     }
     private void tellEveryone(String message) {
@@ -209,7 +207,7 @@ public class MazeServer {
                 // save output stream for that client
                 clientOutputStreams.add(writer);
                 // start a new thread that will read the messages sent by thi client and then send them to all connected clients
-                ClientHandler clientHandler = new ClientHandler(clientSocket, maze);
+                ClientHandler clientHandler = new ClientHandler(clientSocket, maze, new Player());
 
                 Thread t = new Thread(clientHandler);
                 t.start();

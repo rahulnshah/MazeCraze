@@ -10,11 +10,11 @@ public class MazeConstants {
     public static final String CONTINUE_PROMPT = "QUIT OR CONTINUE PLAYING...";
     public static final String SERVER_PING_MESSAGE = "Got a connection";
     // Gold and distance queries
-    public static final String SEE_GOLD_COMMAND = "see gold";
+    public static final String SEE_GOLD_COMMAND = "sg";
     public static final String GOLD_MESSAGE = "YOU CAN COLLECT ";
     public static final String GOLD_SUFFIX = " UNITS OF GOLD AT CURRENT POSITION";
 
-    public static final String DISTANCE_COMMAND = "how far am i?";
+    public static final String DISTANCE_COMMAND = "sd";
     public static final String DISTANCE_MESSAGE = "YOU ARE AT LEAST ";
     public static final String DISTANCE_SUFFIX = " UNITS AWAY FROM DESTINATION AT CURRENT POSITION";
 
