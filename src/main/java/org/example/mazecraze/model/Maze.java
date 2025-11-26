@@ -303,7 +303,7 @@ public class Maze {
                 isMovePossible(this);
                 output.println("VALID_MOVE");
                 move(command, this);
-                opponent.output.println("OPPONENT_MOVED " + command);
+                opponent.output.println("OPPONENT_MOVED " + "(" + row + "," + col + ")");
                 output.println(showGrid());
                 opponent.output.println(showGrid());
             } catch (IllegalStateException e) {

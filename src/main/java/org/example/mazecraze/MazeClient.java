@@ -1,79 +1,79 @@
 package org.example.mazecraze;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class MazeClient {
-    BufferedReader reader;
-    PrintWriter writer;
-    Socket sock;
 
-    BufferedReader consoleInput;
-    
-    public static void main(String [] args)
-    {
-        MazeClient client = new MazeClient();
-        client.go();
+    private final Socket socket;
+    private final Scanner in;
+    private final PrintWriter out;
+
+    public MazeClient(String serverAddress) throws Exception {
+        socket = new Socket(serverAddress, 58901);
+        in = new Scanner(socket.getInputStream());
+        out = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    private void go() {
-        try {
-            // Set up networking
-            setUpNetworking();
+    public void play() throws Exception {
+        try (socket) {
+            var response = in.nextLine();
+            char mark = response.charAt(8);
 
-            // take user input as a message and send it to server
-            consoleInput = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("You are player " + mark);
 
-            // start a new thread to read any messages coming from server
-            Thread readerThread = new Thread(new IncomingReader());
-            readerThread.start();
+            Scanner console = new Scanner(System.in);
 
-            // Read messages from the console and send them to the server
-            String message;
-            while ((message = consoleInput.readLine()) != null) {
-                writer.println(message);
-                // clear the output stream of any characters that may be or maybe not inside the stream
-                writer.flush();
-            }
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-    }
+            while (in.hasNextLine()) {
+                response = in.nextLine();
 
-    private void setUpNetworking() {
-        try{
-            sock = new Socket("127.0.0.1", 8080);
-            InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
-            // Set up input and output streams
-            reader = new BufferedReader(streamReader);
-            writer = new PrintWriter(sock.getOutputStream());
-        }
-        catch (IOException ex)
-        {
-            ex.printStackTrace();
-        }
-    }
+                if (response.startsWith("VALID_MOVE")) {
+                    System.out.println("Move accepted. Waiting...");
 
-    public class IncomingReader implements Runnable {
+                } else if (response.startsWith("OPPONENT_MOVED")) {
+                    var loc = Integer.parseInt(response.substring(15));
+                    System.out.println("Opponent moved to: " + loc);
 
-        @Override
-        public void run() {
-            // read messages from the server and print them to the console
-            String message;
-            try {
-                while ((message = reader.readLine()) != null) {
-                    System.out.println(message);
+                } else if (response.startsWith("MESSAGE")) {
+                    System.out.println(response.substring(8));
+
+                } else if (response.startsWith("VICTORY")) {
+                    System.out.println("You win!");
+                    break;
+
+                } else if (response.startsWith("DEFEAT")) {
+                    System.out.println("You lost.");
+                    break;
+
+                } else if (response.startsWith("TIE")) {
+                    System.out.println("It's a tie.");
+                    break;
+
+                } else if (response.startsWith("OTHER_PLAYER_LEFT")) {
+                    System.out.println("Opponent left.");
+                    break;
+                }
+
+                // If it's your turn, ask for a move
+                if (response.startsWith("MESSAGE Your move")) {
+                    System.out.print("Enter move (0-8): ");
+                    int move = console.nextInt();
+                    out.println("MOVE " + move);
                 }
             }
-            catch (Exception ex)
-            {
-                ex.printStackTrace();
-            }
+
+            out.println("QUIT");
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        if (args.length != 1) {
+            System.err.println("Usage: java MazeClient <server-ip>");
+            return;
+        }
+
+        MazeClient client = new MazeClient(args[0]);
+        client.play();
     }
 }
