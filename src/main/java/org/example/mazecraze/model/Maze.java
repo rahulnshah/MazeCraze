@@ -292,7 +292,6 @@ public class Maze {
                 output.println("MESSAGE Waiting for opponent to connect");
             } else {
                 opponent = currentPlayer;
-                targetRow = getRows() - 1;
                 opponent.opponent = this;
                 opponent.output.println("MESSAGE Your move");
             }
@@ -326,6 +325,7 @@ public class Maze {
                     return;
                 } else if (command.equalsIgnoreCase(NORTH) || command.equalsIgnoreCase(SOUTH) || command.equalsIgnoreCase(WEST) || command.equalsIgnoreCase(EAST) || command.equalsIgnoreCase(SEE_GOLD_COMMAND) || command.equalsIgnoreCase(DISTANCE_COMMAND)) {
                     processMoveCommand(command);
+                    currentPlayer.output.println("MESSAGE Your move");
                 }
                 else {
                     output.println(INVALID_COMMAND);

@@ -78,7 +78,6 @@ public class MazeClient {
                     System.out.print("Enter move (N,S,W,E,sg,sd): ");
                     String move = console.next();
                     out.println(move);
-                    out.flush();
                 }
             }
 
