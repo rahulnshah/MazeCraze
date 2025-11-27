@@ -87,7 +87,7 @@ public class Maze {
         boolean [][] vis = new boolean[n][m];
         Queue<int []> queue = new LinkedList<>();
         // Start from the initial point
-        queue.add(new int [] {startRow,startColumn,1});
+        queue.add(new int [] {startRow, startColumn, 0});
         vis[startRow][startColumn] = true;
 
         // to represent the 4 directions I could traverse in a 2D matrix, like a grid
@@ -130,10 +130,10 @@ public class Maze {
         4) opponent token at (r,c) return 0
         5) no gold at (r,c) return 0
         */
-        if(r < 0 || c < 0 || r >= n || c >= m || grid[r][c] == '1' || grid[r][c] == opponentToken || vis[r][c] || !goldAmounts.containsKey(Arrays.asList(r,c))){
+        if(r < 0 || c < 0 || r >= n || c >= m || grid[r][c] == '1' || grid[r][c] == opponentToken || vis[r][c]){
             return 0;
         }
-        int goldAmt = goldAmounts.get(Arrays.asList(r,c));
+        int goldAmt = goldAmounts.getOrDefault(Arrays.asList(r,c), 0);
         vis[r][c] = true;
         int left = findMaxGold(r, c - 1, n, m, vis, opponentToken);
         int right = findMaxGold(r, c + 1, n, m, vis, opponentToken);
@@ -149,7 +149,8 @@ public class Maze {
         char opponentToken = player.getOpponent().getMark();
         boolean [][] vis = new boolean[n][m];
         int currRow = player.getRow(), currCol = player.getCol();
-        return findMaxGold(currRow, currCol, n, m, vis, opponentToken);
+        int res = findMaxGold(currRow, currCol, n, m, vis, opponentToken);
+        return res;
     }
     public synchronized String showGrid()
     {
