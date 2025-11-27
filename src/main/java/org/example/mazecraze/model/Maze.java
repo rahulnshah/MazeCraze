@@ -329,7 +329,8 @@ public class Maze {
                     currentPlayer.output.println("MESSAGE Your move");
                 }
                 else {
-                    output.println(INVALID_COMMAND);
+                    currentPlayer.output.println(INVALID_COMMAND);
+                    currentPlayer.output.println("MESSAGE Your move");
                 }
             }
         }

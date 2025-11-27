@@ -4,7 +4,7 @@ public class MazeConstants {
     // Welcome and gameplay messages
     public static final String WELCOME_MESSAGE = "WELCOME TO MazeCraze!";
     public static final String MOVEMENT_PROMPT = "PRESS N, S, W, E TO NAVIGATE THROUGH THE MAZE. YOU ARE ";
-    public static final String INVALID_COMMAND = "YOU: INVALID COMMAND!";
+    public static final String INVALID_COMMAND = "INVALID_MOVE";
     public static final String YOU_PREFIX = "YOU:";
     public static final String WIN_MESSAGE = "YOU HAVE WON!";
     public static final String CONTINUE_PROMPT = "QUIT OR CONTINUE PLAYING...";
@@ -26,5 +26,4 @@ public class MazeConstants {
 
     // Server configuration
     public static final int SERVER_PORT = 8080;
-    public static final int MAX_PLAYERS = 2;
 }
