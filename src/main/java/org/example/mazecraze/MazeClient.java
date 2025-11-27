@@ -11,7 +11,7 @@ public class MazeClient {
     private final PrintWriter out;
 
     public MazeClient(String serverAddress) throws Exception {
-        socket = new Socket(serverAddress, 58901);
+        socket = new Socket(serverAddress, 8080);
         in = new Scanner(socket.getInputStream());
         out = new PrintWriter(socket.getOutputStream(), true);
     }
@@ -32,10 +32,28 @@ public class MazeClient {
                     System.out.println("Move accepted. Waiting...");
 
                 } else if (response.startsWith("OPPONENT_MOVED")) {
-                    var loc = Integer.parseInt(response.substring(15));
+                    var loc = response.substring(15);
                     System.out.println("Opponent moved to: " + loc);
 
-                } else if (response.startsWith("MESSAGE")) {
+                }
+                else if(response.startsWith("GRID")){
+                    System.out.println("Current Maze State:");
+                    String [] maze = response.substring(5).split(";");
+                    for(String row : maze){
+                        System.out.println(row);
+                    }
+                }
+                else if (response.startsWith("INVALID_MOVE")) {
+                    System.out.println("Invalid move. Try again.");
+
+                }
+                else if(response.startsWith("MAX_GOLD")){
+                    System.out.println("You can collect a maximum of " + response.substring(9) + " gold in this maze.");
+                }
+                else if(response.startsWith("SHORTEST_PATH")){
+                    System.out.println("Shortest path to target row is: " + response.substring(14) + " steps.");
+                }
+                else if (response.startsWith("MESSAGE")) {
                     System.out.println(response.substring(8));
 
                 } else if (response.startsWith("VICTORY")) {
@@ -57,13 +75,15 @@ public class MazeClient {
 
                 // If it's your turn, ask for a move
                 if (response.startsWith("MESSAGE Your move")) {
-                    System.out.print("Enter move (0-8): ");
-                    int move = console.nextInt();
-                    out.println("MOVE " + move);
+                    System.out.print("Enter move (N,S,W,E,sg,sd): ");
+                    String move = console.next();
+                    out.println(move);
+                    out.flush();
                 }
             }
 
             out.println("QUIT");
+            out.flush();
         }
     }
 

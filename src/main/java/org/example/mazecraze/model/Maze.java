@@ -162,7 +162,7 @@ public class Maze {
             empty.append(grid[i][n - 1]);
             // if you're in the last row i then do not append a newline to empty
             if(i != n - 1) {
-                res.append(empty).append("\n");
+                res.append(empty).append(";");
             }
             else
             {
@@ -287,7 +287,7 @@ public class Maze {
             IO.println("Player " + this + " connected");
             IO.println("Sending welcome message to " + this);
             output.println("WELCOME " + mark);
-            if (mark == 'X') {
+            if (mark == '^') {
                 currentPlayer = this;
                 output.println("MESSAGE Waiting for opponent to connect");
             } else {
@@ -304,8 +304,8 @@ public class Maze {
                 output.println("VALID_MOVE");
                 move(command, this);
                 opponent.output.println("OPPONENT_MOVED " + "(" + row + "," + col + ")");
-                output.println(showGrid());
-                opponent.output.println(showGrid());
+                output.println("GRID " + showGrid());
+                opponent.output.println("GRID " + showGrid());
             } catch (IllegalStateException e) {
                 IO.println("Rejected move from " + this + ": " + e.getMessage());
                 output.println("MESSAGE " + e.getMessage());
@@ -324,7 +324,7 @@ public class Maze {
                     }
                     // No more to read from this player
                     return;
-                } else if (command.equalsIgnoreCase(NORTH) || command.equalsIgnoreCase(SOUTH) || command.equalsIgnoreCase(WEST) || command.equalsIgnoreCase(EAST)) {
+                } else if (command.equalsIgnoreCase(NORTH) || command.equalsIgnoreCase(SOUTH) || command.equalsIgnoreCase(WEST) || command.equalsIgnoreCase(EAST) || command.equalsIgnoreCase(SEE_GOLD_COMMAND) || command.equalsIgnoreCase(DISTANCE_COMMAND)) {
                     processMoveCommand(command);
                 }
                 else {
@@ -336,8 +336,8 @@ public class Maze {
         @Override
         public void run() {
             try (socket) {
-                setup();
-                processCommands();
+                setup(); // first player that joins makes up - kickoff the game
+                processCommands(); // process commands from the player - current player
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

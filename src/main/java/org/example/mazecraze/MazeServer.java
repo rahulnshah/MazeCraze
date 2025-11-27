@@ -13,15 +13,15 @@ public class MazeServer {
     }
 
     private void go() throws Exception {
-        try (var listener = new ServerSocket(58901)) {
+        try (var listener = new ServerSocket(8080)) {
             IO.println("Maze Server is Running...");
             try (var pool = Executors.newVirtualThreadPerTaskExecutor()) {
                 while (true) {
                     // initialize a new maze for each pair of players
                     Maze maze = new Maze();
                     maze.initialize();
-                    pool.execute(maze.new Player(listener.accept(), 'X'));
-                    pool.execute(maze.new Player(listener.accept(), 'O'));
+                    pool.execute(maze.new Player(listener.accept(), '^'));
+                    pool.execute(maze.new Player(listener.accept(), '*'));
                 }
             }
         }
